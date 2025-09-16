@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Relatório de Vistoria - Condomed</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/styles.css" />
+
+  <style>
+    :root {
+      --pdf-radius: var(--border-radius-sm, 12px);
+      --pdf-gap: 14px;
+      --pdf-gap-sm: 10px;
+      --pdf-field-pad: 10px 12px;
+      --pdf-field-border: 1px solid var(--color-light-gray, #E2E8F0);
+      --pdf-soft-shadow: 0 0 0 3px rgba(17, 47, 83, .03);
+      --primary: var(--color-primary, #112F53);
+      --secondary: var(--color-secondary, #1F2937);
+      --gray: var(--color-gray, #6B7280);
+      --light: var(--color-light-gray, #E2E8F0);
+      --highlight-bg: rgba(17, 47, 83, .06);
+    }
+
+    html,
+    body,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    label,
+    input,
+    select,
+    textarea,
+    button {
+      font-family: Calibri, Arial, Helvetica, sans-serif !important;
+    }
+
+    @page {
+      size: A4;
+      margin: 14mm 12mm;
+    }
+
+    body {
+      background: #fff;
+    }
+
+    * {
+      transition: none !important;
+    }
+
+    /* Container geral */
+    .form-container {
+      box-shadow: none !important;
+      border: 1px solid var(--light);
+      border-radius: var(--pdf-radius);
+      padding: 16px;
+    }
+
+    /* Logo */
+    .pdf-logo {
+      text-align: center;
+      margin: 6px 0 14px;
+      page-break-inside: avoid;
+    }
+
+    .pdf-logo img {
+      display: inline-block;
+      max-width: 220px;
+      height: 56px;
+      object-fit: contain;
+    }
+
+    /* Header */
+    .form-header {
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--light);
+      padding-bottom: 12px;
+    }
+
+    .form-title {
+      color: var(--primary);
+      margin: 0 0 6px;
+      font-size: 1.48rem;
+    }
+
+    /* Seções */
+    .form-section,
+    .section-card {
+      margin-bottom: 18px;
+      padding: 14px 16px;
+      border: 1px solid var(--light);
+      border-radius: var(--pdf-radius);
+      background: #fff;
+      page-break-inside: avoid;
+    }
+
+    .section-title {
+      color: var(--primary);
+      margin: 0 0 12px 0;
+      font-size: 1.18rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--light);
+    }
+
+    /* Layout de campos */
+    .form-row {
+      display: flex;
+      gap: var(--pdf-gap);
+      flex-wrap: wrap;
+    }
+
+    .form-group {
+      flex: 1 1 260px;
+      min-width: 240px;
+    }
+
+    .form-group:not(:last-child) {
+      margin-bottom: var(--pdf-gap-sm);
+    }
+
+    .form-group>label {
+      display: block;
+      margin: 0 0 6px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    input[readonly],
+    input:disabled,
+    select:disabled,
+    textarea:disabled {
+      background: #fff !important;
+      color: var(--secondary) !important;
+      -webkit-text-fill-color: var(--secondary);
+      opacity: 1 !important;
+      border: var(--pdf-field-border) !important;
+      border-radius: var(--pdf-radius) !important;
+      padding: var(--pdf-field-pad) !important;
+      box-shadow: var(--pdf-soft-shadow) !important;
+    }
+
+    textarea[disabled] {
+      line-height: 1.4;
+    }
+
+    .radio-group,
+    .checkbox-group {
+      display: flex;
+      gap: 10px 14px;
+      flex-wrap: wrap;
+    }
+
+    .radio-item,
+    .checkbox-item {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      line-height: 1.2;
+    }
+
+    .radio-item input[type="radio"],
+    .checkbox-item input[type="checkbox"] {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: 0;
+      padding: 0;
+      opacity: 0;
+      inset: 0;
+    }
+
+    .fake-radio {
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--primary);
+      border-radius: 50%;
+      display: inline-block;
+      position: relative;
+    }
+
+    .radio-item input[type="radio"]:checked+.fake-radio::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 8px;
+      height: 8px;
+      background: var(--primary);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .fake-check {
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--primary);
+      border-radius: 6px;
+      display: inline-block;
+      position: relative;
+    }
+
+    .checkbox-item input[type="checkbox"]:checked+.fake-check::after {
+      content: "";
+      position: absolute;
+      inset: 2px;
+      background: var(--primary);
+      border-radius: 4px;
+    }
+
+    .radio-item input:checked~span,
+    .checkbox-item input:checked~span {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .activities-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 8px 14px;
+    }
+
+    .activities-grid .checkbox-item {
+      gap: 10px;
+    }
+
+    .risks-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 6px;
+    }
+
+    .risks-table th,
+    .risks-table td {
+      border: 1px solid var(--light);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: middle;
+      font-size: .95rem;
+    }
+
+    .risks-table thead th {
+      background: #F8FAFC;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .photo-sections-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--pdf-gap);
+    }
+
+    .photo-section-card {
+      border: 1px solid var(--light);
+      border-radius: var(--pdf-radius);
+      padding: 12px;
+      background: #fff;
+      box-shadow: var(--pdf-soft-shadow);
+      page-break-inside: avoid;
+    }
+
+    .photo-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      border-bottom: 1px dashed var(--light);
+      padding-bottom: 6px;
+    }
+
+    .photo-section-header h4 {
+      margin: 0;
+      color: var(--secondary);
+    }
+
+    .photo-count {
+      color: var(--gray);
+      font-size: .9rem;
+    }
+
+    .photo-preview-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .photo-thumb {
+      width: 100%;
+      height: 84px;
+      object-fit: cover;
+      background: #fff;
+      border: 1px solid var(--light);
+      border-radius: var(--pdf-radius);
+      display: block;
+    }
+
+    .signature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--pdf-gap);
+    }
+
+    .signature-card {
+      border: 1px solid var(--light);
+      border-radius: var(--pdf-radius);
+      background: #fff;
+      box-shadow: var(--pdf-soft-shadow);
+      page-break-inside: avoid;
+    }
+
+    .signature-header {
+      padding: 10px 12px;
+      border-bottom: 1px dashed var(--light);
+    }
+
+    .signature-header h4 {
+      margin: 0;
+      color: var(--secondary);
+    }
+
+    .signature-canvas-wrap {
+      background: #fff;
+      border: 1px dashed var(--light);
+      border-radius: var(--pdf-radius);
+      padding: 8px;
+      margin: 10px 12px 12px;
+    }
+
+    .color-gray {
+      color: var(--gray);
+    }
+  </style>
+
+
+
+</head>
+
+<body>
+  <div class="form-container">
+
+    <div class="pdf-logo">
+      <img src="{{logoUrl}}" alt="Condomed">
+    </div>
+
+    <header class="form-header">
+      <h1 class="form-title">Vistoria de Segurança e Ergonômica</h1>
+      <p>Condomínio: <strong>{{condominio}}</strong></p>
+    </header>
+
+    <!-- 1. Dados -->
+    <section class="form-section">
+      <h3 class="section-title"><i class="fas fa-info-circle"></i> 1. Dados da Vistoria e Condomínio</h3>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Data da Vistoria</label>
+          <input type="text" readonly value="{{dateFmt dataVistoria}}">
+        </div>
+        <div class="form-group">
+          <label>Horário da Vistoria</label>
+          <input type="text" readonly value="{{horarioVistoria}}">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nome do Estabelecimento</label>
+          <input type="text" readonly value="{{condominio}}">
+        </div>
+        <div class="form-group">
+          <label>CNPJ</label>
+          <input type="text" readonly value="{{cnpj}}">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Endereço Completo</label>
+        <input type="text" readonly value="{{endereco}}">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Técnico Responsável</label>
+          <input type="text" readonly value="{{vistoriadorNome}}">
+        </div>
+        <div class="form-group">
+          <label>Responsável Local</label>
+          <input type="text" readonly value="{{responsavelLocal}}">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Setor / Área Avaliada</label>
+        <input type="text" readonly value="{{setor}}">
+      </div>
+    </section>
+
+    <!-- 2. ATIVIDADES OBSERVADAS -->
+    <section class="section-card">
+      <h3 class="section-title">2. Atividades observadas</h3>
+      <div class="activities-grid checkbox-group">
+        {{!-- Cada item marca "checked" se estiver presente no array atividades --}}
+        <label class="checkbox-item">
+          <input type="checkbox" disabled {{#if (contains atividades "limpeza_geral" )}}checked{{/if}}>
+          <span class="fake-check"></span><span>Limpeza geral</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" disabled {{#if (contains atividades "jardinagem" )}}checked{{/if}}>
+          <span class="fake-check"></span><span>Jardinagem</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" disabled {{#if (contains atividades "manutencao_eletrica" )}}checked{{/if}}>
+          <span class="fake-check"></span><span>Manutenção elétrica</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" disabled {{#if (contains atividades "manutencao_hidraulica" )}}checked{{/if}}>
+          <span class="fake-check"></span><span>Manutenção hidráulica</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" disabled {{#if (contains atividades "portaria" )}}checked{{/if}}>
+          <span class="fake-check"></span><span>Portaria</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" disabled {{#if (contains atividades "coleta_lixo" )}}checked{{/if}}>
+          <span class="fake-check"></span><span>Coleta de lixo</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" disabled {{#if (contains atividades "manipulacao_lixo" )}}checked{{/if}}>
+          <span class="fake-check"></span><span>Manipulação de lixo</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" disabled {{#if (contains atividades "esgoto" )}}checked{{/if}}>
+          <span class="fake-check"></span><span>Esgoto</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" disabled {{#if (contains atividades "caixa_gordura" )}}checked{{/if}}>
+          <span class="fake-check"></span><span>Caixa de gordura</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" disabled {{#if (contains atividades "servicos_altura" )}}checked{{/if}}>
+          <span class="fake-check"></span><span>Serviços em altura</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" disabled {{#if (contains atividades "manipulacao_acido" )}}checked{{/if}}>
+          <span class="fake-check"></span><span>Manipulação de ácido</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" disabled {{#if (contains atividades "saneantes_domissanitarios" )}}checked{{/if}}>
+          <span class="fake-check"></span><span>Saneantes domissanitários</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" disabled {{#if (contains atividades "maquinas_equipamentos" )}}checked{{/if}}>
+          <span class="fake-check"></span><span>Utilização de máquinas e equipamentos</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" disabled {{#if (contains atividades "perfurocortantes" )}}checked{{/if}}>
+          <span class="fake-check"></span><span>Materiais perfurocortantes</span>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" disabled {{#if (contains atividades "tintas_solvente" )}}checked{{/if}}>
+          <span class="fake-check"></span><span>Tintas à base de solventes</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" disabled {{#if (contains atividades "tintas_agua" )}}checked{{/if}}>
+            <span class="fake-check"></span><span>Tintas à base d’água</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" disabled {{#if (contains atividades "limpeza_piscina" )}}checked{{/if}}>
+            <span class="fake-check"></span><span>Limpeza de piscina</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" disabled {{#if (contains atividades "casa_maquinas" )}}checked{{/if}}>
+            <span class="fake-check"></span><span>Casa de máquinas</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" disabled {{#if (contains atividades "coccao" )}}checked{{/if}}>
+            <span class="fake-check"></span><span>Cocção</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" disabled {{#if (contains atividades "manipulacao_alimentos" )}}checked{{/if}}>
+            <span class="fake-check"></span><span>Manipulação de alimentos</span>
+          </label>
+          
+          <div class="form-group" style="flex:1 1 100%; margin-top:6px;">
+            {{#if (contains atividades "outras")}}
+            <strong>Outras:</strong> {{#if atividadesOutrasDesc}}{{atividadesOutrasDesc}}{{else}}—{{/if}}
+            {{/if}}
+          </div>
+          </div>
+          </section>
+          
+          <!-- 3. CONDIÇÕES DO AMBIENTE -->
+          <section class="section-card">
+            <h3 class="section-title">3. Condições do ambiente</h3>
+          
+            <div class="form-row">
+              <div class="form-group">
+                <label>Ventilação</label>
+                <div class="radio-group">
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq env_ventilacao "adequada" )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Adequada</span>
+                  </label>
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq env_ventilacao "inadequada" )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Inadequada</span>
+                  </label>
+                </div>
+              </div>
+          
+              <div class="form-group">
+                <label>Iluminação</label>
+                <div class="radio-group">
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq env_iluminacao "adequada" )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Adequada</span>
+                  </label>
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq env_iluminacao "inadequada" )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Inadequada</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          
+            <div class="form-row">
+              <div class="form-group">
+                <label>Ordem e limpeza</label>
+                <div class="radio-group">
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq env_ordem "satisfatoria" )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Satisfatória</span>
+                  </label>
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq env_ordem "precaria" )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Precária</span>
+                  </label>
+                </div>
+              </div>
+          
+              <div class="form-group">
+                <label>Sinalização de segurança</label>
+                <div class="radio-group">
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq env_sinalizacao "presente" )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Presente</span>
+                  </label>
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq env_sinalizacao "ausente" )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Ausente</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          
+            <div class="form-row">
+              <div class="form-group" style="flex: 1 1 100%;">
+                <label>Presença de EPCs (exaustor, proteção de máquinas, ventilação)</label>
+                <div class="radio-group">
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq env_epc "sim" )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Sim</span>
+                  </label>
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq env_epc "nao" )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Não</span>
+                  </label>
+                </div>
+                {{#if (eq env_epc "sim")}}
+                <div style="margin-top:6px;"><strong>Quais:</strong> {{#if env_epc_quais}}{{env_epc_quais}}{{else}}—{{/if}}
+                </div>
+                {{/if}}
+              </div>
+            </div>
+          </section>
+          
+          <!-- 4. RISCOS IDENTIFICADOS -->
+          <section class="section-card">
+            <h3 class="section-title">4. Riscos identificados</h3>
+            <table class="risks-table">
+              <thead>
+                <tr>
+                  <th>Tipo de risco</th>
+                  <th>Presente</th>
+                  <th>Observações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{!-- Biológicos --}}
+                <tr>
+                  <td>Agentes biológicos</td>
+                  <td>
+                    {{#if (eq risco_biologicos "sim")}}Sim{{else}}Não{{/if}}
+                  </td>
+                  <td>{{#if risco_biologicos_obs}}{{risco_biologicos_obs}}{{else}}—{{/if}}</td>
+                </tr>
+          
+                {{!-- Químicos --}}
+                <tr>
+                  <td>Agentes químicos</td>
+                  <td>{{#if (eq risco_quimicos "sim")}}Sim{{else}}Não{{/if}}</td>
+                  <td>{{#if risco_quimicos_obs}}{{risco_quimicos_obs}}{{else}}—{{/if}}</td>
+                </tr>
+          
+                {{!-- Ruído --}}
+                <tr>
+                  <td>Ruído</td>
+                  <td>{{#if (eq risco_ruido "sim")}}Sim{{else}}Não{{/if}}</td>
+                  <td>{{#if risco_ruido_obs}}{{risco_ruido_obs}}{{else}}—{{/if}}</td>
+                </tr>
+          
+                {{!-- Calor/Frio --}}
+                <tr>
+                  <td>Calor/Frio excessivo</td>
+                  <td>{{#if (eq risco_calorfrio "sim")}}Sim{{else}}Não{{/if}}</td>
+                  <td>{{#if risco_calorfrio_obs}}{{risco_calorfrio_obs}}{{else}}—{{/if}}</td>
+                </tr>
+          
+                {{!-- Radiações não-ionizantes --}}
+                <tr>
+                  <td>Radiações não-ionizantes</td>
+                  <td>{{#if (eq risco_radiacoes "sim")}}Sim{{else}}Não{{/if}}</td>
+                  <td>{{#if risco_radiacoes_obs}}{{risco_radiacoes_obs}}{{else}}—{{/if}}</td>
+                </tr>
+          
+                {{!-- Eletricidade --}}
+                <tr>
+                  <td>Eletricidade</td>
+                  <td>{{#if (eq risco_eletricidade "sim")}}Sim{{else}}Não{{/if}}</td>
+                  <td>{{#if risco_eletricidade_obs}}{{risco_eletricidade_obs}}{{else}}—{{/if}}</td>
+                </tr>
+          
+                {{!-- Altura --}}
+                <tr>
+                  <td>Trabalho em altura</td>
+                  <td>{{#if (eq risco_altura "sim")}}Sim{{else}}Não{{/if}}</td>
+                  <td>{{#if risco_altura_obs}}{{risco_altura_obs}}{{else}}—{{/if}}</td>
+                </tr>
+          
+                {{!-- Inflamáveis/explosivos --}}
+                <tr>
+                  <td>Inflamáveis ou explosivos</td>
+                  <td>{{#if (eq risco_inflamaveis "sim")}}Sim{{else}}Não{{/if}}</td>
+                  <td>{{#if risco_inflamaveis_obs}}{{risco_inflamaveis_obs}}{{else}}—{{/if}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+          
+          <!-- 5. INSALUBRIDADE -->
+          <section class="form-section">
+            <h3 class="section-title">5. Insalubridade</h3>
+          
+            <div class="form-row">
+              <div class="form-group">
+                <label>Agente envolvido</label>
+                <div>
+                  {{#if insal_agente}}{{insal_agente}}{{else}}—{{/if}}
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Justificativa técnica</label>
+                <div>
+                  {{#if insal_justificativa}}{{insal_justificativa}}{{else}}—{{/if}}
+                </div>
+              </div>
+            </div>
+          
+            <div class="form-row">
+              <div class="form-group">
+                <label>EPI fornecido</label>
+                <div class="radio-group">
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq insal_epi_fornecido "sim" )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Sim</span>
+                  </label>
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq insal_epi_fornecido "nao" )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Não</span>
+                  </label>
+                </div>
+              </div>
+          
+              <div class="form-group">
+                <label>EPI utilizado corretamente</label>
+                <div class="radio-group">
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq insal_epi_utilizado "sim" )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Sim</span>
+                  </label>
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq insal_epi_utilizado "nao" )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Não</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          
+            <div class="form-row">
+              <div class="form-group">
+                <label>EPI neutraliza o risco?</label>
+                <div class="radio-group">
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq epiNeutraliza "sim" )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Sim</span>
+                  </label>
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq epiNeutraliza "nao" )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Não</span>
+                  </label>
+                </div>
+              </div>
+          
+              <div class="form-group">
+                <label>Existe a passividade para emissão de Laudo Técnico?</label>
+                <div class="radio-group">
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq laudoInsalub "sim" )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Sim</span>
+                  </label>
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq laudoInsalub "nao" )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Não</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </section>
+          
+          
+          <!-- 6. Periculosidade (NR-16) -->
+          <section class="form-section nr16">
+            <h3 class="section-title"><i class="fa-solid fa-fire-flame-curved"></i> 6. Periculosidade</h3>
+          
+            <div class="form-row">
+              <div class="form-group">
+                <label>Classificação (NR-16)</label>
+                <div class="checkbox-group">
+                  <label class="checkbox-item">
+                    <input type="checkbox" disabled {{#if (contains pericClassificacao 'eletricidade' )}}checked{{/if}}>
+                    <span class="fake-check"></span><span>Eletricidade</span>
+                  </label>
+                  <label class="checkbox-item">
+                    <input type="checkbox" disabled {{#if (contains pericClassificacao 'inflamaveis' )}}checked{{/if}}>
+                    <span class="fake-check"></span><span>Inflamáveis</span>
+                  </label>
+                  <label class="checkbox-item">
+                    <input type="checkbox" disabled {{#if (contains pericClassificacao 'explosivos' )}}checked{{/if}}>
+                    <span class="fake-check"></span><span>Explosivos</span>
+                  </label>
+                  <label class="checkbox-item">
+                    <input type="checkbox" disabled {{#if (contains pericClassificacao 'outros' )}}checked{{/if}}>
+                    <span class="fake-check"></span><span>Outros</span>
+                    {{#if pericOutrosDesc}}
+                    <input type="text" readonly value="{{pericOutrosDesc}}" style="margin-left:10px; width: 220px;">
+                    {{/if}}
+                  </label>
+                </div>
+              </div>
+            </div>
+          
+            <div class="form-row">
+              <div class="form-group">
+                <label>Exposição habitual e permanente?</label>
+                <div class="radio-group">
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq exposicao 'sim' )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Sim</span>
+                  </label>
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq exposicao 'nao' )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Não</span>
+                  </label>
+                </div>
+              </div>
+          
+              <div class="form-group">
+                <label>Medidas de controle existentes</label>
+                <input type="text" readonly value="{{medidasControle}}">
+              </div>
+            </div>
+          
+            <div class="form-row">
+              <div class="form-group">
+                <label>Existe a Passividade para emissão de Laudo Técnico?</label>
+                <div class="radio-group">
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq laudoPeric 'sim' )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Sim</span>
+                  </label>
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq laudoPeric 'nao' )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Não</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </section>
+          
+          <!-- 7. EPI / Treinamento / Documentação -->
+          <section class="form-section">
+            <h3 class="section-title"><i class="fa-solid fa-helmet-safety"></i> 7. EPI / Treinamento / Documentação</h3>
+          
+            <div class="form-row">
+              <div class="form-group">
+                <label>EPI fornecido</label>
+                <div class="radio-group">
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq epiFornecimento 'sim' )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Sim</span>
+                  </label>
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq epiFornecimento 'nao' )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Não</span>
+                  </label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Relação dos EPI's</label>
+                <input type="text" readonly value="{{relacaoEpis}}">
+              </div>
+            </div>
+          
+            <div class="form-row">
+              <div class="form-group">
+                <label>Funcionário treinado para uso de EPI</label>
+                <div class="radio-group">
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq treinamentoEpi 'sim' )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Sim</span>
+                  </label>
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq treinamentoEpi 'nao' )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Não</span>
+                  </label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Ficha de EPI assinada</label>
+                <div class="radio-group">
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq fichaAssinada 'sim' )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Sim</span>
+                  </label>
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq fichaAssinada 'nao' )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Não</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          
+            <div class="form-row">
+              <div class="form-group">
+                <label>Possui Ficha de entrega de EPI</label>
+                <div class="radio-group">
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq fichaEntrega 'sim' )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Sim</span>
+                  </label>
+                  <label class="radio-item">
+                    <input type="radio" disabled {{#if (eq fichaEntrega 'nao' )}}checked{{/if}}>
+                    <span class="fake-radio"></span><span>Não</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </section>
+          
+          <!-- 8. Registros Visuais -->
+          <section class="form-section" id="registros-visuais">
+            <h3 class="section-title"><i class="fa-solid fa-camera-retro"></i> 8. Registros Visuais</h3>
+          
+            <div class="photo-sections-grid">
+              <!-- Portaria -->
+              <section class="photo-section-card">
+                <header class="photo-section-header">
+                  <h4>Portaria</h4>
+                  {{#if (notEmpty fotos.portaria)}}<span class="photo-count">{{fotos.portaria.length}} foto(s)</span>{{/if}}
+                </header>
+                <div class="photo-preview-grid">
+                  {{#if (notEmpty fotos.portaria)}}
+                  {{#each fotos.portaria}} <img class="photo-thumb" src="{{this}}" alt="Foto Portaria" /> {{/each}}
+                  {{else}} <small class="color-gray">Sem registros.</small> {{/if}}
+                </div>
+              </section>
+          
+              <!-- Área do lixo -->
+              <section class="photo-section-card">
+                <header class="photo-section-header">
+                  <h4>Área do lixo</h4>
+                  {{#if (notEmpty fotos.lixo)}}<span class="photo-count">{{fotos.lixo.length}} foto(s)</span>{{/if}}
+                </header>
+                <div class="photo-preview-grid">
+                  {{#if (notEmpty fotos.lixo)}}
+                  {{#each fotos.lixo}} <img class="photo-thumb" src="{{this}}" alt="Foto Área do lixo" /> {{/each}}
+                  {{else}} <small class="color-gray">Sem registros.</small> {{/if}}
+                </div>
+              </section>
+          
+              <!-- Maquinário -->
+              <section class="photo-section-card">
+                <header class="photo-section-header">
+                  <h4>Maquinário</h4>
+                  {{#if (notEmpty fotos.maquinario)}}<span class="photo-count">{{fotos.maquinario.length}}
+                    foto(s)</span>{{/if}}
+                </header>
+                <div class="photo-preview-grid">
+                  {{#if (notEmpty fotos.maquinario)}}
+                  {{#each fotos.maquinario}} <img class="photo-thumb" src="{{this}}" alt="Foto Maquinário" /> {{/each}}
+                  {{else}} <small class="color-gray">Sem registros.</small> {{/if}}
+                </div>
+              </section>
+          
+              <!-- Copa/cozinha -->
+              <section class="photo-section-card">
+                <header class="photo-section-header">
+                  <h4>Copa/cozinha</h4>
+                  {{#if (notEmpty fotos.copa)}}<span class="photo-count">{{fotos.copa.length}} foto(s)</span>{{/if}}
+                </header>
+                <div class="photo-preview-grid">
+                  {{#if (notEmpty fotos.copa)}}
+                  {{#each fotos.copa}} <img class="photo-thumb" src="{{this}}" alt="Foto Copa/cozinha" /> {{/each}}
+                  {{else}} <small class="color-gray">Sem registros.</small> {{/if}}
+                </div>
+              </section>
+            </div>
+          
+            <!-- EPI -->
+            <section class="photo-section-card">
+              <header class="photo-section-header">
+                <h4>EPI</h4>
+                {{#if (notEmpty fotos.epi)}}<span class="photo-count">{{fotos.epi.length}} foto(s)</span>{{/if}}
+              </header>
+              <div class="photo-preview-grid">
+                {{#if (notEmpty fotos.epi)}}
+                {{#each fotos.epi}} <img class="photo-thumb" src="{{this}}" alt="Foto EPI" /> {{/each}}
+                {{else}}
+                <small class="color-gray">Sem registros.</small>
+                {{/if}}
+              </div>
+            </section>
+          
+          </section>
+
+    <!-- 9. Conclusão -->
+    <section class="form-section">
+      <h3 class="section-title"><i class="fa-solid fa-clipboard-check"></i> 9. Conclusão do Técnico</h3>
+      <div class="form-group">
+        <label>Observações gerais da visita</label>
+        <textarea rows="4" disabled>{{observacoesConclusao}}</textarea>
+      </div>
+    </section>
+
+    <!-- Checklist Ergonômico -->
+    <section class="form-section">
+      <h3 class="section-title"><i class="fa-solid fa-person-walking"></i> Checklist de Vistoria Ergonômica</h3>
+
+      <h4>1. Postura e Esforço Físico</h4>
+      <div class="form-row">
+        <div class="form-group">
+          <label>O trabalhador mantém posturas forçadas ou inclinadas por longos períodos?</label>
+          <div class="radio-group">
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq postura 'sim' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Sim</span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq postura 'nao' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Não</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Há necessidade de levantamento manual de cargas?</label>
+          <div class="radio-group">
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq cargas 'sim' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Sim</span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq cargas 'nao' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Não</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>As cargas manuseadas ultrapassam 25 kg sem auxílio mecânico?</label>
+          <div class="radio-group">
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq cargasPeso 'sim' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Sim</span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq cargasPeso 'nao' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Não</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>O colaborador realiza movimentos repetitivos com membros superiores?</label>
+          <div class="radio-group">
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq repetitivo 'sim' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Sim</span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq repetitivo 'nao' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Não</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Existe risco de esforço excessivo nos ombros, punhos ou joelhos?</label>
+          <div class="radio-group">
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq esforco 'sim' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Sim</span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq esforco 'nao' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Não</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>As tarefas permitem alternância de movimentos ou pausas regulares?</label>
+          <div class="radio-group">
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq pausas 'sim' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Sim</span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq pausas 'nao' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Não</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>A atividade exige trabalho em pé por longos períodos sem apoio para descanso?</label>
+          <div class="radio-group">
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq pe 'sim' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Sim</span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq pe 'nao' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Não</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <h4>2. Equipamentos de Apoio</h4>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Existem ferramentas ergonômicas adequadas para a função?</label>
+          <div class="radio-group">
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq ferramentas 'sim' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Sim</span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq ferramentas 'nao' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Não</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>O posto de trabalho permite apoio alternado dos pés ou banco de descanso?</label>
+          <div class="radio-group">
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq apoio 'sim' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Sim</span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq apoio 'nao' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Não</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>O local possui piso nivelado e antiderrapante?</label>
+          <div class="radio-group">
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq piso 'sim' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Sim</span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq piso 'nao' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Não</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <h4>3. Ambiente de Trabalho</h4>
+      <div class="form-row">
+        <div class="form-group">
+          <label>O ambiente possui boa ventilação e iluminação?</label>
+          <div class="radio-group">
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq ambiente 'sim' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Sim</span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq ambiente 'nao' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Não</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Há proteção contra sol e chuva em atividades externas contínuas?</label>
+          <div class="radio-group">
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq protecao 'sim' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Sim</span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq protecao 'nao' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Não</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>O nível de ruído está dentro dos limites toleráveis?</label>
+          <div class="radio-group">
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq ruidoErgo 'sim' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Sim</span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq ruidoErgo 'nao' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Não</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Existem obstáculos ou degraus que dificultam a movimentação?</label>
+          <div class="radio-group">
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq obstaculos 'sim' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Sim</span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq obstaculos 'nao' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Não</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Há risco de escorregões, tropeços ou quedas nos locais acessados com frequência?</label>
+          <div class="radio-group">
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq queda 'sim' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Sim</span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq queda 'nao' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Não</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <h4>4. Organização da Jornada</h4>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Há pausas durante o turno para descanso?</label>
+          <div class="radio-group">
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq jornadaPausas 'sim' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Sim</span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq jornadaPausas 'nao' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Não</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>O trabalhador é exposto a jornadas prolongadas sem alternância de tarefas?</label>
+          <div class="radio-group">
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq jornadaProlongada 'sim' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Sim</span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq jornadaProlongada 'nao' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Não</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Há revezamento de funções quando necessário?</label>
+          <div class="radio-group">
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq revezamento 'sim' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Sim</span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq revezamento 'nao' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Não</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>O profissional possui tempo suficiente para execução adequada das tarefas, sem sobrecarga?</label>
+          <div class="radio-group">
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq tempo 'sim' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Sim</span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" disabled {{#if (eq tempo 'nao' )}}checked{{/if}}>
+              <span class="fake-radio"></span><span>Não</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <h4>5. Observações sobre a Ergonomia</h4>
+      <div class="form-group">
+        <textarea rows="3" disabled>{{observacoesErgo}}</textarea>
+      </div>
+    </section>
+
+    <!-- Cancelamento (se houver) -->
+    {{#if isCancelled}}
+    <section class="form-section">
+      <h3 class="section-title"><i class="fas fa-ban"></i> Detalhes do Cancelamento</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Motivo do cancelamento</label>
+          <input type="text" readonly value="{{cancelamentoMotivo}}">
+        </div>
+        <div class="form-group">
+          <label>Data do cancelamento</label>
+          <input type="text" readonly value="{{cancelamentoData}}">
+        </div>
+      </div>
+      {{#if cancelamentoFoto}}
+      <div class="photo-preview-grid">
+        <img class="photo-thumb" src="data:{{cancelamentoFotoMimeType}};base64,{{cancelamentoFotoBuffer}}"
+          alt="Foto da Fachada">
+      </div>
+      {{/if}}
+    </section>
+    {{/if}}
+
+    <!-- Assinaturas -->
+    <section class="form-section">
+      <h3 class="section-title"><i class="fa-solid fa-signature"></i> Assinaturas</h3>
+      <div class="signature-grid">
+        <section class="signature-card">
+          <header class="signature-header">
+            <h4>Técnico responsável</h4>
+          </header>
+          <div class="signature-canvas-wrap">
+            {{#if signatureTechDataUrl}}
+            <img src="{{signatureTechDataUrl}}" alt="Assinatura técnico"
+              style="width:100%; height:200px; object-fit:contain; background:#fff; display:block; border-radius:8px;">
+            {{else}} <div style="height:200px;"></div> {{/if}}
+          </div>
+        </section>
+        <section class="signature-card">
+          <header class="signature-header">
+            <h4>Responsável local</h4>
+          </header>
+          <div class="signature-canvas-wrap">
+            {{#if signatureLocalDataUrl}}
+            <img src="{{signatureLocalDataUrl}}" alt="Assinatura responsável"
+              style="width:100%; height:200px; object-fit:contain; background:#fff; display:block; border-radius:8px;">
+            {{else}} <div style="height:200px;"></div> {{/if}}
+          </div>
+        </section>
+      </div>
+    </section>
+
+  </div>
+</body>
+
+</html>

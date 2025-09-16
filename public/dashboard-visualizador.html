@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Condomed - Relatórios de Vistorias</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&family=Sora:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div id="loading-overlay" class="overlay">
+      <div class="spinner"></div>
+    </div>
+    <div id="toast-message" class="toast-message"></div>
+
+    <div class="app-container">
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <img src="img/logo Condomed.png" alt="Condomed Logo" class="logo" />
+        </div>
+        <nav class="sidebar-nav">
+          <ul>
+            <li>
+              <a href="dashboard-gestor.html">
+                <i class="fas fa-home"></i> <span>Dashboard Gestor</span>
+              </a>
+            </li>
+            <li class="active">
+              <a href="#">
+                <i class="fas fa-chart-bar"></i> <span>Relatórios</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      <div class="main-content">
+        <div class="main-header">
+          <div class="user-profile">
+            <i class="fas fa-user-circle me-2"></i>
+            <span id="userName">Usuário</span>
+            <button id="logout-btn" class="logout-btn ms-3">
+              <i class="fas fa-sign-out-alt"></i> Sair
+            </button>
+          </div>
+        </div>
+
+        <div class="dashboard-content">
+          <h1>Relatórios de Vistorias Concluídas</h1>
+
+          <!-- Filtros -->
+          <section class="section-card filter-rotas">
+            <h2>Filtrar Relatórios</h2>
+            <form id="filter-form" class="filter-grid">
+              <div class="form-group">
+                <label for="filter-vistoriador">Vistoriador:</label>
+                <div class="select-wrapper">
+                  <select id="filterVistoriador" name="vistoriador">
+                    <option value="">Todos</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="filter-bairro">Bairro:</label>
+                <div class="select-wrapper">
+                  <select id="filterBairro" name="bairro">
+                    <option value="">Todos</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="filter-administradora">Administradora:</label>
+                <div class="select-wrapper">
+                  <select id="filterAdministradora" name="administradora">
+                    <option value="">Todas</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="filterStartDate">Data Início:</label>
+                <input type="date" id="filterStartDate" name="startDate" />
+              </div>
+
+              <div class="form-group">
+                <label for="filterEndDate">Data Fim:</label>
+                <input type="date" id="filterEndDate" name="endDate" />
+              </div>
+
+              <div class="filter-buttons">
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-filter"></i> Aplicar Filtros
+                </button>
+                <button type="button" id="clear-filters-btn" class="btn btn-secondary">
+                  <i class="fas fa-undo"></i> Limpar Filtros
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <!-- Lista de vistorias -->
+          <section class="section-card rotas-list">
+            <div class="list-header d-flex align-items-center justify-content-between">
+              <h2 class="m-0">Vistorias Concluídas</h2>
+              <div class="list-actions">
+                <button id="download-selected" class="btn btn-primary" disabled>
+                  <i class="fas fa-file-download"></i> Baixar PDFs selecionados
+                </button>
+              </div>
+            </div>
+
+            <div id="rotas-table-message" class="alert alert-info" style="display:none;"></div>
+
+            <div class="table-responsive">
+              <table class="rotas-table">
+                <thead>
+                  <tr>
+                    <th class="select-cell">
+                      <input type="checkbox" id="select-all" />
+                    </th>
+                    <th>Condomínio</th>
+                    <th>Endereço</th>
+                    <th>Bairro</th>
+                    <th>Administradora</th>
+                    <th>Vistoriador</th>
+                    <th>Data</th>
+                    <th>Status</th>
+                    <th class="actions-cell">Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="rotasTableBody">
+                  <tr>
+                    <td colspan="9" class="text-center">Carregando relatórios...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div id="pagination-controls" class="pagination"></div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Observações -->
+    <div
+      class="modal fade"
+      id="genericModal"
+      tabindex="-1"
+      aria-labelledby="genericModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="genericModalLabel">Observações</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+          </div>
+          <div class="modal-body" id="genericModalBody"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              Fechar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/visualizador.js"></script>
+  </body>
+</html>

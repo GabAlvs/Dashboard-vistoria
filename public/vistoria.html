@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Condomed - Formulário de Vistoria</title>
+
+    <!-- Fonts & Icons -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&family=Sora:wght@300;400;600&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <!-- Global styles -->
+    <link rel="stylesheet" href="css/styles.css" />
+
+    <!-- Ajustes locais da página (não conflitam com o PDF) -->
+    <style>
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+            position: relative
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: #fff;
+            box-shadow: var(--card-shadow);
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            transition: var(--transition-default);
+            overflow-y: auto
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background: #f5f7fa;
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            min-height: 100vh;
+            transition: margin-left .25s ease, width .25s ease
+        }
+
+        .form-container {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, .1), 0 2px 4px -1px rgba(0, 0, 0, .06);
+            padding: 25px;
+            margin: 0 auto 30px;
+            max-width: 1200px
+        }
+
+        .form-header {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #E2E8F0;
+            padding-bottom: 16px
+        }
+
+        .form-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px
+        }
+
+        .form-title {
+            color: #112F53;
+            margin-bottom: 8px;
+            font-size: 1.5rem
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #E2E8F0
+        }
+
+        .form-section:last-child {
+            border-bottom: none
+        }
+
+        .section-title {
+            color: #112F53;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center
+        }
+
+        .section-title i {
+            margin-right: 10px
+        }
+
+        .section-card {
+            margin-bottom: 30px
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px 15px
+        }
+
+        .form-group {
+            flex: 1 0 200px;
+            margin: 0 10px 15px;
+            min-width: 0
+        }
+
+        .form-group>label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2D3748
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #E2E8F0;
+            border-radius: 5px;
+            font-family: 'Sora', sans-serif;
+            transition: all .3s ease
+        }
+
+        .form-group input:read-only,
+        .form-group select:disabled {
+            background: #F8FAFC;
+            color: #718096
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #112F53;
+            outline: none
+        }
+
+        .checkbox-group {
+            margin-bottom: 10px
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px
+        }
+
+        .checkbox-item input {
+            margin-right: 8px
+        }
+
+        .radio-group {
+            display: flex;
+            align-items: center;
+            gap: 8px 16px;
+            margin-bottom: 10px;
+            flex-wrap: wrap
+        }
+
+        .radio-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-right: 0
+        }
+
+        .radio-item input {
+            margin: 0
+        }
+
+        .risks-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px
+        }
+
+        .risks-table th,
+        .risks-table td {
+            border: 1px solid #E2E8F0;
+            padding: 10px;
+            text-align: left;
+            vertical-align: middle
+        }
+
+        .risks-table th {
+            background: #F8FAFC;
+            font-weight: 500;
+            color: #112F53
+        }
+
+        .present-cell {
+            white-space: nowrap
+        }
+
+        .signature-area {
+            margin-top: 40px
+        }
+
+        .signature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px
+        }
+
+        .signature-card {
+            border: 1px solid #E2E8F0;
+            border-radius: 10px;
+            background: #fff;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, .06)
+        }
+
+        .signature-header {
+            padding: 12px;
+            border-bottom: 1px dashed #E2E8F0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between
+        }
+
+        .signature-canvas-wrap {
+            background: #fff;
+            border: 1px dashed #E2E8F0;
+            border-radius: 10px;
+            padding: 8px;
+            margin: 12px
+        }
+
+        .signature-hint {
+            display: block;
+            margin: 0 12px 14px;
+            color: #718096
+        }
+
+        .photo-sections-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px
+        }
+
+        .photo-section-card {
+            border: 1px solid #E2E8F0;
+            border-radius: 10px;
+            background: #fff;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, .06);
+            padding: 12px
+        }
+
+        .photo-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            border-bottom: 1px dashed #E2E8F0;
+            padding-bottom: 6px
+        }
+
+        .photo-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px
+        }
+
+        .photo-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px
+        }
+
+        .photo-thumb {
+            width: 100%;
+            height: 84px;
+            object-fit: cover;
+            background: #fff;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            display: block
+        }
+
+        @media (max-width:992px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: var(--sidebar-width, 250px)
+            }
+
+            .app-container.sidebar-open .sidebar {
+                transform: translateX(0)
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%
+            }
+
+            .sidebar-toggle {
+                display: inline-flex
+            }
+        }
+
+        @media (max-width:768px) {
+            .form-row {
+                flex-direction: column
+            }
+
+            .form-group {
+                flex: 1 0 100%
+            }
+        }
+
+        @media (max-width:576px) {
+            .radio-group {
+                flex-direction: column;
+                align-items: flex-start
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="img/logo Condomed.png" alt="Condomed" class="logo" />
+            </div>
+            <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="dashboard-vistoriador.html"><i class="fas fa-home"></i><span>Dashboard</span></a></li>
+                    <li><a href="#"><i class="fas fa-history"></i><span>Histórico</span></a></li>
+                    <li><a href="#"><i class="fas fa-cog"></i><span>Configurações</span></a></li>
+                    <li><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i><span>Sair</span></a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Conteúdo -->
+        <main class="main-content">
+            <div class="form-container">
+                <header class="form-header">
+                    <div class="form-header-actions">
+                        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Abrir menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <a href="dashboard-vistoriador.html" class="btn btn-secondary" id="back-dashboard">
+                            <i class="fas fa-arrow-left"></i> Voltar
+                        </a>
+                    </div>
+                    <h1 class="form-title">Vistoria de Segurança e Ergonômica</h1>
+                    <p>Condomínio: <strong id="current-condominio">Carregando...</strong></p>
+                </header>
+
+                <form id="vistoria-form">
+                    <!-- 1. Dados -->
+                    <section class="form-section">
+                        <h3 class="section-title"><i class="fas fa-info-circle"></i> 1. Dados da Vistoria e Condomínio
+                        </h3>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="data-vistoria">Data da Vistoria</label>
+                                <input type="date" id="data-vistoria" name="data-vistoria" readonly />
+                            </div>
+                            <div class="form-group">
+                                <label for="horario-vistoria">Horário da Vistoria</label>
+                                <input type="time" id="horario-vistoria" name="horario-vistoria" readonly />
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="nome-estabelecimento">Nome do Estabelecimento</label>
+                                <input type="text" id="nome-estabelecimento" name="nome-estabelecimento" readonly />
+                            </div>
+                            <div class="form-group">
+                                <label for="cnpj">CNPJ</label>
+                                <input type="text" id="cnpj" name="cnpj" readonly />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="endereco">Endereço Completo</label>
+                            <input type="text" id="endereco" name="endereco" readonly />
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tecnico-responsavel">Técnico Responsável</label>
+                                <input type="text" id="tecnico-responsavel" name="tecnico-responsavel" readonly />
+                            </div>
+                            <div class="form-group">
+                                <label for="responsavel-local">Responsável Local</label>
+                                <input type="text" id="responsavel-local" name="responsavel-local" required />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="setor">Setor / Área Avaliada</label>
+                            <input type="text" id="setor" name="setor" />
+                        </div>
+                    </section>
+
+                    <!-- 2. Atividades observadas -->
+                    <section class="section-card">
+                        <h3>2. Atividades observadas</h3>
+                        <div class="activities-grid checkbox-group">
+                            <label class="checkbox-item"><input type="checkbox" name="atividades"
+                                    value="limpeza_geral" /><span>Limpeza geral</span></label>
+                            <label class="checkbox-item"><input type="checkbox" name="atividades"
+                                    value="jardinagem" /><span>Jardinagem</span></label>
+                            <label class="checkbox-item"><input type="checkbox" name="atividades"
+                                    value="manutencao_eletrica" /><span>Manutenção elétrica</span></label>
+                            <label class="checkbox-item"><input type="checkbox" name="atividades"
+                                    value="manutencao_hidraulica" /><span>Manutenção hidráulica</span></label>
+                            <label class="checkbox-item"><input type="checkbox" name="atividades"
+                                    value="portaria" /><span>Portaria</span></label>
+                            <label class="checkbox-item"><input type="checkbox" name="atividades"
+                                    value="coleta_lixo" /><span>Coleta de lixo</span></label>
+                            <label class="checkbox-item"><input type="checkbox" name="atividades"
+                                    value="manipulacao_lixo" /><span>Manipulação de lixo</span></label>
+                            <label class="checkbox-item"><input type="checkbox" name="atividades"
+                                    value="esgoto" /><span>Esgoto</span></label>
+                            <label class="checkbox-item"><input type="checkbox" name="atividades"
+                                    value="caixa_gordura" /><span>Caixa de gordura</span></label>
+                            <label class="checkbox-item"><input type="checkbox" name="atividades"
+                                    value="servicos_altura" /><span>Serviços em altura</span></label>
+                            <label class="checkbox-item"><input type="checkbox" name="atividades"
+                                    value="manipulacao_acido" /><span>Manipulação de ácido</span></label>
+                            <label class="checkbox-item"><input type="checkbox" name="atividades"
+                                    value="saneantes_domissanitarios" /><span>Saneantes domissanitários</span></label>
+                            <label class="checkbox-item"><input type="checkbox" name="atividades"
+                                    value="maquinas_equipamentos" /><span>Utilização de máquinas e
+                                    equipamentos</span></label>
+                            <label class="checkbox-item"><input type="checkbox" name="atividades"
+                                    value="perfurocortantes" /><span>Materiais perfurocortantes</span></label>
+                            <label class="checkbox-item"><input type="checkbox" name="atividades"
+                                    value="tintas_solvente" /><span>Tintas à base de solventes</span></label>
+                            <label class="checkbox-item"><input type="checkbox" name="atividades"
+                                    value="tintas_agua" /><span>Tintas à base d’água</span></label>
+                            <label class="checkbox-item"><input type="checkbox" name="atividades"
+                                    value="limpeza_piscina" /><span>Limpeza de piscina</span></label>
+                            <label class="checkbox-item"><input type="checkbox" name="atividades"
+                                    value="casa_maquinas" /><span>Casa de máquinas</span></label>
+                            <label class="checkbox-item"><input type="checkbox" name="atividades"
+                                    value="coccao" /><span>Cocção</span></label>
+                            <label class="checkbox-item"><input type="checkbox" name="atividades"
+                                    value="manipulacao_alimentos" /><span>Manipulação de alimentos</span></label>
+
+                            <label class="checkbox-item">
+                                <input type="checkbox" id="atividades-outras" name="atividades" value="outras" />
+                                <span>Outras</span>
+                            </label>
+                            <input type="text" id="atividadesOutrasDesc" name="atividadesOutrasDesc"
+                                class="input-inline" placeholder="Descreva outras atividades"
+                                style="display:none;max-width:420px" />
+                        </div>
+                    </section>
+
+                    <!-- 3. Condições do ambiente -->
+                    <section class="section-card">
+                        <h3>3. Condições do ambiente</h3>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Ventilação</label>
+                                <div class="radio-group">
+                                    <label class="radio-item"><input type="radio" name="env_ventilacao"
+                                            value="adequada" /><span>Adequada</span></label>
+                                    <label class="radio-item"><input type="radio" name="env_ventilacao"
+                                            value="inadequada" /><span>Inadequada</span></label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Iluminação</label>
+                                <div class="radio-group">
+                                    <label class="radio-item"><input type="radio" name="env_iluminacao"
+                                            value="adequada" /><span>Adequada</span></label>
+                                    <label class="radio-item"><input type="radio" name="env_iluminacao"
+                                            value="inadequada" /><span>Inadequada</span></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Ordem e limpeza</label>
+                                <div class="radio-group">
+                                    <label class="radio-item"><input type="radio" name="env_ordem"
+                                            value="satisfatoria" /><span>Satisfatória</span></label>
+                                    <label class="radio-item"><input type="radio" name="env_ordem"
+                                            value="precaria" /><span>Precária</span></label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Sinalização de segurança</label>
+                                <div class="radio-group">
+                                    <label class="radio-item"><input type="radio" name="env_sinalizacao"
+                                            value="presente" /><span>Presente</span></label>
+                                    <label class="radio-item"><input type="radio" name="env_sinalizacao"
+                                            value="ausente" /><span>Ausente</span></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Presença de EPCs (exaustor, proteção de máquinas, ventilação)</label>
+                                <div class="radio-group">
+                                    <label class="radio-item"><input type="radio" name="env_epc"
+                                            value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item"><input type="radio" name="env_epc"
+                                            value="nao" /><span>Não</span></label>
+                                </div>
+                                <input type="text" id="env_epc_quais" name="env_epc_quais" class="input-inline"
+                                    placeholder="Quais EPCs?" style="display:none;max-width:420px" />
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 4. Riscos identificados -->
+                    <section class="section-card">
+                        <h3>4. Riscos identificados</h3>
+                        <table class="risks-table">
+                            <thead>
+                                <tr>
+                                    <th>Tipo de risco</th>
+                                    <th>Presente</th>
+                                    <th>Observações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Agentes biológicos</td>
+                                    <td class="present-cell">
+                                        <label class="radio-item"><input type="radio" name="risco_biologicos"
+                                                value="sim" /><span>Sim</span></label>
+                                        <label class="radio-item"><input type="radio" name="risco_biologicos"
+                                                value="nao" /><span>Não</span></label>
+                                    </td>
+                                    <td><input type="text" id="risco_biologicos_obs" name="risco_biologicos_obs"
+                                            class="input-inline" placeholder="Obs." /></td>
+                                </tr>
+                                <tr>
+                                    <td>Agentes químicos</td>
+                                    <td class="present-cell">
+                                        <label class="radio-item"><input type="radio" name="risco_quimicos"
+                                                value="sim" /><span>Sim</span></label>
+                                        <label class="radio-item"><input type="radio" name="risco_quimicos"
+                                                value="nao" /><span>Não</span></label>
+                                    </td>
+                                    <td><input type="text" id="risco_quimicos_obs" name="risco_quimicos_obs"
+                                            class="input-inline" placeholder="Obs." /></td>
+                                </tr>
+                                <tr>
+                                    <td>Ruído</td>
+                                    <td class="present-cell">
+                                        <label class="radio-item"><input type="radio" name="risco_ruido"
+                                                value="sim" /><span>Sim</span></label>
+                                        <label class="radio-item"><input type="radio" name="risco_ruido"
+                                                value="nao" /><span>Não</span></label>
+                                    </td>
+                                    <td><input type="text" id="risco_ruido_obs" name="risco_ruido_obs"
+                                            class="input-inline" placeholder="Obs." /></td>
+                                </tr>
+                                <tr>
+                                    <td>Calor/Frio excessivo</td>
+                                    <td class="present-cell">
+                                        <label class="radio-item"><input type="radio" name="risco_calorfrio"
+                                                value="sim" /><span>Sim</span></label>
+                                        <label class="radio-item"><input type="radio" name="risco_calorfrio"
+                                                value="nao" /><span>Não</span></label>
+                                    </td>
+                                    <td><input type="text" id="risco_calorfrio_obs" name="risco_calorfrio_obs"
+                                            class="input-inline" placeholder="Obs." /></td>
+                                </tr>
+                                <tr>
+                                    <td>Radiações não-ionizantes</td>
+                                    <td class="present-cell">
+                                        <label class="radio-item"><input type="radio" name="risco_radiacoes"
+                                                value="sim" /><span>Sim</span></label>
+                                        <label class="radio-item"><input type="radio" name="risco_radiacoes"
+                                                value="nao" /><span>Não</span></label>
+                                    </td>
+                                    <td><input type="text" id="risco_radiacoes_obs" name="risco_radiacoes_obs"
+                                            class="input-inline" placeholder="Obs." /></td>
+                                </tr>
+                                <tr>
+                                    <td>Eletricidade</td>
+                                    <td class="present-cell">
+                                        <label class="radio-item"><input type="radio" name="risco_eletricidade"
+                                                value="sim" /><span>Sim</span></label>
+                                        <label class="radio-item"><input type="radio" name="risco_eletricidade"
+                                                value="nao" /><span>Não</span></label>
+                                    </td>
+                                    <td><input type="text" id="risco_eletricidade_obs" name="risco_eletricidade_obs"
+                                            class="input-inline" placeholder="Obs." /></td>
+                                </tr>
+                                <tr>
+                                    <td>Trabalho em altura</td>
+                                    <td class="present-cell">
+                                        <label class="radio-item"><input type="radio" name="risco_altura"
+                                                value="sim" /><span>Sim</span></label>
+                                        <label class="radio-item"><input type="radio" name="risco_altura"
+                                                value="nao" /><span>Não</span></label>
+                                    </td>
+                                    <td><input type="text" id="risco_altura_obs" name="risco_altura_obs"
+                                            class="input-inline" placeholder="Obs." /></td>
+                                </tr>
+                                <tr>
+                                    <td>Inflamáveis ou explosivos</td>
+                                    <td class="present-cell">
+                                        <label class="radio-item"><input type="radio" name="risco_inflamaveis"
+                                                value="sim" /><span>Sim</span></label>
+                                        <label class="radio-item"><input type="radio" name="risco_inflamaveis"
+                                                value="nao" /><span>Não</span></label>
+                                    </td>
+                                    <td><input type="text" id="risco_inflamaveis_obs" name="risco_inflamaveis_obs"
+                                            class="input-inline" placeholder="Obs." /></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
+
+                    <!-- 5. Insalubridade (bloco único) -->
+                    <section class="form-section">
+                        <h3 class="section-title"><i class="fa-solid fa-person-digging"></i> 5. Insalubridade</h3>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="insal_agente">Agente envolvido</label>
+                                <input type="text" id="insal_agente" name="insal_agente"
+                                    placeholder="Ex.: Ruído contínuo &gt; 85 dB, agentes biológicos, etc." />
+                            </div>
+                            <div class="form-group">
+                                <label for="insal_justificativa">Justificativa técnica</label>
+                                <input type="text" id="insal_justificativa" name="insal_justificativa"
+                                    placeholder="Breve justificativa técnica" />
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>EPI fornecido</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="insal_epi_fornecido-sim"><input type="radio"
+                                            id="insal_epi_fornecido-sim" name="insal_epi_fornecido"
+                                            value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="insal_epi_fornecido-nao"><input type="radio"
+                                            id="insal_epi_fornecido-nao" name="insal_epi_fornecido"
+                                            value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>EPI utilizado corretamente</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="insal_epi_utilizado-sim"><input type="radio"
+                                            id="insal_epi_utilizado-sim" name="insal_epi_utilizado"
+                                            value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="insal_epi_utilizado-nao"><input type="radio"
+                                            id="insal_epi_utilizado-nao" name="insal_epi_utilizado"
+                                            value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>EPI neutraliza o risco?</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="epiNeutraliza-sim"><input type="radio"
+                                            id="epiNeutraliza-sim" name="epiNeutraliza"
+                                            value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="epiNeutraliza-nao"><input type="radio"
+                                            id="epiNeutraliza-nao" name="epiNeutraliza"
+                                            value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Existe a passividade para emissão de Laudo Técnico?</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="laudoInsalub-sim"><input type="radio"
+                                            id="laudoInsalub-sim" name="laudoInsalub"
+                                            value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="laudoInsalub-nao"><input type="radio"
+                                            id="laudoInsalub-nao" name="laudoInsalub"
+                                            value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 6. Periculosidade (NR-16) -->
+                    <section class="form-section nr16">
+                        <h3 class="section-title"><i class="fa-solid fa-fire-flame-curved"></i> 6. Periculosidade</h3>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Classificação (NR-16)</label>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-item" for="peric-eletricidade"><input type="checkbox"
+                                            id="peric-eletricidade" name="pericClassificacao"
+                                            value="eletricidade" /><span>Eletricidade</span></label>
+                                    <label class="checkbox-item" for="peric-inflamaveis"><input type="checkbox"
+                                            id="peric-inflamaveis" name="pericClassificacao"
+                                            value="inflamaveis" /><span>Inflamáveis</span></label>
+                                    <label class="checkbox-item" for="peric-explosivos"><input type="checkbox"
+                                            id="peric-explosivos" name="pericClassificacao"
+                                            value="explosivos" /><span>Explosivos</span></label>
+                                    <label class="checkbox-item" for="peric-outros">
+                                        <input type="checkbox" id="peric-outros" name="pericClassificacao"
+                                            value="outros" />
+                                        <span>Outros</span>
+                                        <input type="text" id="pericOutrosDesc" name="pericOutrosDesc"
+                                            placeholder="Especifique"
+                                            style="margin-left:10px;width:150px;display:none" />
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Exposição habitual e permanente?</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="exposicao-sim"><input type="radio" id="exposicao-sim"
+                                            name="exposicao" value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="exposicao-nao"><input type="radio" id="exposicao-nao"
+                                            name="exposicao" value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="medidasControle">Medidas de controle existentes</label>
+                                <input type="text" id="medidasControle" name="medidasControle" />
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Existe a Passividade para emissão de Laudo Técnico?</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="laudoPeric-sim"><input type="radio"
+                                            id="laudoPeric-sim" name="laudoPeric" value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="laudoPeric-nao"><input type="radio"
+                                            id="laudoPeric-nao" name="laudoPeric" value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 7. EPI / Treinamento / Documentação -->
+                    <section class="form-section">
+                        <h3 class="section-title"><i class="fa-solid fa-helmet-safety"></i> 7. EPI / Treinamento /
+                            Documentação</h3>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>EPI fornecido</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="epiFornecimento-sim"><input type="radio"
+                                            id="epiFornecimento-sim" name="epiFornecimento"
+                                            value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="epiFornecimento-nao"><input type="radio"
+                                            id="epiFornecimento-nao" name="epiFornecimento"
+                                            value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="relacaoEpis">Relação dos EPI's</label>
+                                <input type="text" id="relacaoEpis" name="relacaoEpis" />
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Funcionário treinado para uso de EPI</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="treinamentoEpi-sim"><input type="radio"
+                                            id="treinamentoEpi-sim" name="treinamentoEpi"
+                                            value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="treinamentoEpi-nao"><input type="radio"
+                                            id="treinamentoEpi-nao" name="treinamentoEpi"
+                                            value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Ficha de EPI assinada</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="fichaAssinada-sim"><input type="radio"
+                                            id="fichaAssinada-sim" name="fichaAssinada"
+                                            value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="fichaAssinada-nao"><input type="radio"
+                                            id="fichaAssinada-nao" name="fichaAssinada"
+                                            value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Possui Ficha de entrega de EPI</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="fichaEntrega-sim"><input type="radio"
+                                            id="fichaEntrega-sim" name="fichaEntrega"
+                                            value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="fichaEntrega-nao"><input type="radio"
+                                            id="fichaEntrega-nao" name="fichaEntrega"
+                                            value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 8. Registros Visuais -->
+                    <section class="form-section" id="registros-visuais">
+                        <h3 class="section-title"><i class="fa-solid fa-camera-retro"></i> 8. Registros Visuais</h3>
+
+                        <div class="photo-sections-grid">
+                            <!-- Portaria -->
+                            <section class="photo-section-card" data-section="portaria">
+                                <header class="photo-section-header">
+                                    <h4>Portaria</h4>
+                                    <span class="photo-count" id="count-portaria">0 foto(s)</span>
+                                </header>
+                                <div class="photo-controls">
+                                    <button type="button" class="btn btn-primary btn-tirar-foto"
+                                        data-section="portaria"><i class="fa-solid fa-camera"></i> Tirar foto</button>
+                                    <button type="button" class="btn btn-secondary btn-clear"
+                                        data-section="portaria">Limpar</button>
+                                </div>
+                                <div class="photo-preview-grid" id="preview-portaria" aria-live="polite"></div>
+                            </section>
+
+                            <!-- Área do lixo -->
+                            <section class="photo-section-card" data-section="lixo">
+                                <header class="photo-section-header">
+                                    <h4>Área do lixo</h4>
+                                    <span class="photo-count" id="count-lixo">0 foto(s)</span>
+                                </header>
+                                <div class="photo-controls">
+                                    <button type="button" class="btn btn-primary btn-tirar-foto" data-section="lixo"><i
+                                            class="fa-solid fa-camera"></i> Tirar foto</button>
+                                    <button type="button" class="btn btn-secondary btn-clear"
+                                        data-section="lixo">Limpar</button>
+                                </div>
+                                <div class="photo-preview-grid" id="preview-lixo" aria-live="polite"></div>
+                            </section>
+
+                            <!-- Maquinário -->
+                            <section class="photo-section-card" data-section="maquinario">
+                                <header class="photo-section-header">
+                                    <h4>Maquinário</h4>
+                                    <span class="photo-count" id="count-maquinario">0 foto(s)</span>
+                                </header>
+                                <div class="photo-controls">
+                                    <button type="button" class="btn btn-primary btn-tirar-foto"
+                                        data-section="maquinario"><i class="fa-solid fa-camera"></i> Tirar foto</button>
+                                    <button type="button" class="btn btn-secondary btn-clear"
+                                        data-section="maquinario">Limpar</button>
+                                </div>
+                                <div class="photo-preview-grid" id="preview-maquinario" aria-live="polite"></div>
+                            </section>
+                            <!-- Copa/cozinha -->
+                            <section class="photo-section-card" data-section="copa">
+                                <header class="photo-section-header">
+                                    <h4>Copa/cozinha</h4>
+                                    <span class="photo-count" id="count-copa">0 foto(s)</span>
+                                </header>
+                                <div class="photo-controls">
+                                    <button type="button" class="btn btn-primary btn-tirar-foto" data-section="copa"><i
+                                            class="fa-solid fa-camera"></i> Tirar foto</button>
+                                    <button type="button" class="btn btn-secondary btn-clear"
+                                        data-section="copa">Limpar</button>
+                                </div>
+                                <div class="photo-preview-grid" id="preview-copa" aria-live="polite"></div>
+                            </section>
+                        </div>
+
+
+                        <!-- EPI -->
+                        <section class="photo-section-card" data-section="epi">
+                            <header class="photo-section-header">
+                                <h4>EPI</h4>
+                                <span class="photo-count" id="count-epi">0 foto(s)</span>
+                            </header>
+                            <div class="photo-controls">
+                                <button type="button" class="btn btn-primary btn-tirar-foto" data-section="epi">
+                                    <i class="fa-solid fa-camera"></i> Tirar foto
+                                </button>
+                                <button type="button" class="btn btn-secondary btn-clear"
+                                    data-section="epi">Limpar</button>
+                            </div>
+                            <div class="photo-preview-grid" id="preview-epi" aria-live="polite"></div>
+                        </section>
+
+
+                    </section>
+
+                    <!-- 9. Conclusão -->
+                    <section class="form-section">
+                        <h3 class="section-title"><i class="fa-solid fa-clipboard-check"></i> 9. Conclusão do Técnico
+                        </h3>
+                        <div class="form-group">
+                            <label for="observacoesConclusao">Observações gerais da visita</label>
+                            <textarea id="observacoesConclusao" name="observacoesConclusao" rows="5"></textarea>
+                        </div>
+                    </section>
+
+                    <!-- Checklist Ergonômico -->
+                    <section class="form-section">
+                        <h3 class="section-title"><i class="fa-solid fa-person-walking"></i> Checklist de Vistoria
+                            Ergonômica</h3>
+
+                        <h4>1. Postura e Esforço Físico</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>O trabalhador mantém posturas forçadas ou inclinadas por longos períodos?</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="postura-sim"><input type="radio" id="postura-sim"
+                                            name="postura" value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="postura-nao"><input type="radio" id="postura-nao"
+                                            name="postura" value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Há necessidade de levantamento manual de cargas?</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="cargas-sim"><input type="radio" id="cargas-sim"
+                                            name="cargas" value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="cargas-nao"><input type="radio" id="cargas-nao"
+                                            name="cargas" value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>As cargas manuseadas ultrapassam 25 kg sem auxílio mecânico?</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="cargasPeso-sim"><input type="radio"
+                                            id="cargasPeso-sim" name="cargasPeso" value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="cargasPeso-nao"><input type="radio"
+                                            id="cargasPeso-nao" name="cargasPeso" value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>O colaborador realiza movimentos repetitivos com membros superiores?</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="repetitivo-sim"><input type="radio"
+                                            id="repetitivo-sim" name="repetitivo" value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="repetitivo-nao"><input type="radio"
+                                            id="repetitivo-nao" name="repetitivo" value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Existe risco de esforço excessivo nos ombros, punhos ou joelhos?</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="esforco-sim"><input type="radio" id="esforco-sim"
+                                            name="esforco" value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="esforco-nao"><input type="radio" id="esforco-nao"
+                                            name="esforco" value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>As tarefas permitem alternância de movimentos ou pausas regulares?</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="pausas-sim"><input type="radio" id="pausas-sim"
+                                            name="pausas" value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="pausas-nao"><input type="radio" id="pausas-nao"
+                                            name="pausas" value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>A atividade exige trabalho em pé por longos períodos sem apoio para
+                                    descanso?</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="pe-sim"><input type="radio" id="pe-sim" name="pe"
+                                            value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="pe-nao"><input type="radio" id="pe-nao" name="pe"
+                                            value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h4>2. Equipamentos de Apoio</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Existem ferramentas ergonômicas adequadas para a função?</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="ferramentas-sim"><input type="radio"
+                                            id="ferramentas-sim" name="ferramentas"
+                                            value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="ferramentas-nao"><input type="radio"
+                                            id="ferramentas-nao" name="ferramentas"
+                                            value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>O posto de trabalho permite apoio alternado dos pés ou banco de descanso?</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="apoio-sim"><input type="radio" id="apoio-sim"
+                                            name="apoio" value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="apoio-nao"><input type="radio" id="apoio-nao"
+                                            name="apoio" value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>O local possui piso nivelado e antiderrapante?</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="piso-sim"><input type="radio" id="piso-sim"
+                                            name="piso" value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="piso-nao"><input type="radio" id="piso-nao"
+                                            name="piso" value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h4>3. Ambiente de Trabalho</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>O ambiente possui boa ventilação e iluminação?</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="ambiente-sim"><input type="radio" id="ambiente-sim"
+                                            name="ambiente" value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="ambiente-nao"><input type="radio" id="ambiente-nao"
+                                            name="ambiente" value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Há proteção contra sol e chuva em atividades externas contínuas?</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="protecao-sim"><input type="radio" id="protecao-sim"
+                                            name="protecao" value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="protecao-nao"><input type="radio" id="protecao-nao"
+                                            name="protecao" value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>O nível de ruído está dentro dos limites toleráveis?</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="ruidoErgo-sim"><input type="radio" id="ruidoErgo-sim"
+                                            name="ruidoErgo" value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="ruidoErgo-nao"><input type="radio" id="ruidoErgo-nao"
+                                            name="ruidoErgo" value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Existem obstáculos ou degraus que dificultam a movimentação?</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="obstaculos-sim"><input type="radio"
+                                            id="obstaculos-sim" name="obstaculos" value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="obstaculos-nao"><input type="radio"
+                                            id="obstaculos-nao" name="obstaculos" value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Há risco de escorregões, tropeços ou quedas nos locais acessados com
+                                    frequência?</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="queda-sim"><input type="radio" id="queda-sim"
+                                            name="queda" value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="queda-nao"><input type="radio" id="queda-nao"
+                                            name="queda" value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h4>4. Organização da Jornada</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Há pausas durante o turno para descanso?</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="jornadaPausas-sim"><input type="radio"
+                                            id="jornadaPausas-sim" name="jornadaPausas"
+                                            value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="jornadaPausas-nao"><input type="radio"
+                                            id="jornadaPausas-nao" name="jornadaPausas"
+                                            value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>O trabalhador é exposto a jornadas prolongadas sem alternância de
+                                    tarefas?</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="jornadaProlongada-sim"><input type="radio"
+                                            id="jornadaProlongada-sim" name="jornadaProlongada"
+                                            value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="jornadaProlongada-nao"><input type="radio"
+                                            id="jornadaProlongada-nao" name="jornadaProlongada"
+                                            value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Há revezamento de funções quando necessário?</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="revezamento-sim"><input type="radio"
+                                            id="revezamento-sim" name="revezamento"
+                                            value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="revezamento-nao"><input type="radio"
+                                            id="revezamento-nao" name="revezamento"
+                                            value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>O profissional possui tempo suficiente para execução adequada das tarefas, sem
+                                    sobrecarga?</label>
+                                <div class="radio-group">
+                                    <label class="radio-item" for="tempo-sim"><input type="radio" id="tempo-sim"
+                                            name="tempo" value="sim" /><span>Sim</span></label>
+                                    <label class="radio-item" for="tempo-nao"><input type="radio" id="tempo-nao"
+                                            name="tempo" value="nao" /><span>Não</span></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h4>5. Observações Gerais</h4>
+                        <div class="form-group">
+                            <label for="observacoesErgo">Observações sobre a Ergonômia</label>
+                            <textarea id="observacoesErgo" name="observacoesErgo" rows="3"></textarea>
+                        </div>
+                    </section>
+
+                    <!-- Assinaturas -->
+                    <section class="form-section signature-area">
+                        <h3 class="section-title"><i class="fa-solid fa-signature"></i> Assinaturas</h3>
+                        <div class="signature-grid">
+                            <section class="signature-card">
+                                <header class="signature-header">
+                                    <h4>Técnico responsável</h4>
+                                    <div class="signature-actions">
+                                        <button type="button" class="btn btn-secondary"
+                                            id="sig-tech-undo">Desfazer</button>
+                                        <button type="button" class="btn btn-secondary"
+                                            id="sig-tech-clear">Limpar</button>
+                                    </div>
+                                </header>
+                                <div class="signature-canvas-wrap">
+                                    <canvas id="sig-tech" width="600" height="200"
+                                        aria-label="Assinatura do técnico"></canvas>
+                                </div>
+                                <small class="signature-hint">Assine com a caneta ou dedo.</small>
+                            </section>
+
+                            <section class="signature-card">
+                                <header class="signature-header">
+                                    <h4>Responsável local</h4>
+                                    <div class="signature-actions">
+                                        <button type="button" class="btn btn-secondary"
+                                            id="sig-local-undo">Desfazer</button>
+                                        <button type="button" class="btn btn-secondary"
+                                            id="sig-local-clear">Limpar</button>
+                                    </div>
+                                </header>
+                                <div class="signature-canvas-wrap">
+                                    <canvas id="sig-local" width="600" height="200"
+                                        aria-label="Assinatura do responsável local"></canvas>
+                                </div>
+                                <small class="signature-hint">Assine com a caneta ou dedo.</small>
+                            </section>
+                        </div>
+                    </section>
+
+                    <!-- Ações -->
+                    <div class="form-actions" style="display:flex;justify-content:flex-end;gap:15px;margin-top:30px">
+                        <button type="button" class="btn btn-secondary btn-save"><i class="fa-solid fa-floppy-disk"></i>
+                            Salvar Rascunho</button>
+                        <button type="submit" class="btn btn-primary btn-submit-form"><i
+                                class="fa-solid fa-circle-check"></i> Finalizar Vistoria</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts da página -->
+    <script src="js/form.js"></script>
+
+    <!-- Modal da Câmera (captura nativa) -->
+    <div class="modal" id="camera-modal" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Tirar foto — <span id="camera-section-label">Setor</span></h3>
+                <button type="button" class="close-modal" id="camera-close" aria-label="Fechar">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="camera-wrap">
+                    <video id="camera-stream" autoplay playsinline></video>
+                    <div class="camera-actions">
+                        <button type="button" class="btn-ghost" id="camera-cancel">Cancelar</button>
+                        <button type="button" class="btn btn-primary" id="camera-capture"><i
+                                class="fa-solid fa-camera"></i> Capturar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Canvas oculto para snapshot -->
+    <canvas id="camera-canvas" style="display:none;"></canvas>
+</body>
+
+</html>

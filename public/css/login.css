@@ -1,0 +1,164 @@
+:root {
+  --font-primary: 'Ubuntu', sans-serif;
+  --font-secondary: 'Sora', sans-serif;
+  --color-primary: #112F53;
+  --neon-orange: #FF8C00;
+  --neon-glow: rgba(255, 165, 0, 0.6);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-secondary);
+  background-color: #F8FAFC;
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.login-content {
+  width: 100%;
+  max-width: 350px;
+  text-align: center;
+}
+
+.greeting {
+  font-family: var(--font-primary);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 8px;
+}
+
+.subtext {
+  font-family: var(--font-secondary);
+  font-size: 16px;
+  font-weight: 400;
+  color: #64748B;
+  margin-bottom: 32px;
+}
+
+
+#login-form {
+  width: 100%;
+  padding: 0;
+}
+
+/* ESTILOS DO FORMULÁRIO */
+.form-group {
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 25px 15px 15px 15px;
+  border: 2px solid #E2E8F0;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+  transition: all 0.3s ease;
+  background: white;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.form-group label {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  color: #94A3B8;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  background: white;
+  padding: 0 5px;
+  transform-origin: left center;
+}
+
+/* Efeito quando o input está focado OU preenchido */
+.form-group.focused label,
+.form-group input:not(:placeholder-shown) + label,
+.form-group input:valid + label {
+  top: 0;
+  left: 10px;
+  font-size: 12px;
+  transform: translateY(-50%) scale(0.75);
+
+  color: var(--neon-orange);
+  text-shadow: 0 0 5px var(--neon-glow);
+}
+
+
+.form-group.focused input {
+  border-color: var(--neon-orange);
+  box-shadow: 0 0 10px var(--neon-glow);
+  animation: neon-pulse 1.5s infinite alternate;
+}
+
+
+.form-group input:not(:focus):not(:placeholder-shown) {
+  border-color: #E2E8F0;
+  box-shadow: none;
+  animation: none;
+}
+
+.form-group input:not(:focus):valid {
+  border-color: #E2E8F0;
+  box-shadow: none;
+  animation: none;
+}
+
+.form-group input:not(:focus):valid + label {
+  color: #94A3B8;
+  text-shadow: none;
+}
+
+
+@keyframes neon-pulse {
+  0% { box-shadow: 0 0 5px var(--neon-glow); }
+  100% { box-shadow: 0 0 15px var(--neon-glow); }
+}
+
+
+.login-button {
+  width: 100%;
+  padding: 14px;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: var(--font-primary);
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+}
+
+.login-button:hover {
+  background-color: #0a2242;
+  transform: translateY(-2px);
+}
+
+.logo-top {
+  width: 200px;
+  margin: 30px auto;
+  display: block;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.logo-bottom {
+  width: 150px;
+  margin: 30px auto;
+  display: block;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}

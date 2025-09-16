@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Condomed - Dashboard Vistoriador</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&family=Sora:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body class="vistoriador-page">
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="img/logo Condomed.png" alt="Condomed" class="logo">
+            </div>
+            <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active">
+                        <a href="#">
+                            <i class="fas fa-home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fas fa-history"></i>
+                            <span>Histórico</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fas fa-cog"></i>
+                            <span>Configurações</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="logout-btn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Sair</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="main-header">
+                <div class="header-left">
+                    <h1 id="greeting-vistoriador">Olá, <span id="user-name-display">Vistoriador</span>!</h1>
+                    <p id="current-date"></p>
+                </div>
+                <div class="header-right">
+                </div>
+                <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Abrir menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </header>
+
+            <div class="dashboard-content">
+                <div class="status-cards">
+                    <div class="card">
+                        <div class="card-icon bg-blue">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="card-info">
+                            <h3 id="total-vistorias">0</h3>
+                            <p>Vistorias programadas</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-icon bg-green">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="card-info">
+                            <h3 id="vistorias-concluidas">0</h3>
+                            <p>Concluídas</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-icon bg-orange">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="card-info">
+                            <h3 id="vistorias-pendentes">0</h3>
+                            <p>Pendentes</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-header">
+                        <h3>Progresso das vistorias</h3>
+                        <span id="progress-percentage">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <div class="vistorias-list">
+                    <div class="list-header">
+                        <h3>Minhas Vistorias</h3>
+                        <div class="list-actions">
+                            <select id="filter-date">
+                                <option value="today">Hoje</option>
+                                <option value="tomorrow">Amanhã</option>
+                                <option value="all">Todas</option>
+                            </select>
+                            <select id="sort-by-bairro">
+                                <option value="all">Ordenar por Bairro</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="list-container" id="vistorias-list-container">
+                        <table class="vistorias-table">
+                            <thead>
+                                <tr>
+                                    <th>ADMINISTRADORA</th>
+                                    <th>CONDOMÍNIO</th>
+                                    <th>ENDEREÇO</th>
+                                    <th>BAIRRO</th>
+                                    <th>DATA</th>
+                                    <th>STATUS</th>
+                                    <th>OBSERVAÇÃO</th>
+                                    <th>AÇÕES</th>
+                                </tr>
+                            </thead>
+                            <tbody id="vistorias-table-body">
+                                <tr>
+                                    <td colspan="8" style="text-align: center; padding: 20px; color: #718096;">
+                                        Carregando vistorias...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal" id="observation-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Observação da Vistoria</h3>
+                <button class="close-modal" id="close-observation-modal-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="observation-text"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="ok-observation-btn">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="cancel-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Cancelar Vistoria</h3>
+                <button class="close-modal" id="close-cancel-modal-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="cancel-form" enctype="multipart/form-data">
+                    <input type="hidden" id="vistoria-id">
+
+                    <div class="form-group">
+                        <label for="cancel-reason">Motivo do cancelamento</label>
+                        <select id="cancel-reason" name="cancel-reason" required>
+                            <option value="">Selecione um motivo</option>
+                            <option value="condominio-fechado">Condomínio fechado</option>
+                            <option value="sem-responsavel">Sem responsável disponível</option>
+                            <option value="problema-acesso">Problema de acesso</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="other-reason-container" style="display: none;">
+                        <label for="other-reason-desc">Especifique o motivo</label>
+                        <textarea id="other-reason-desc" name="other-reason-desc" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cancel-photo">Foto da fachada (obrigatório)</label>
+                        <div class="photo-upload">
+                            <input type="file" id="cancel-photo" name="cancel-photo" accept="image/*"
+                                capture="environment" required hidden>
+                            <button type="button" id="open-camera-btn" class="upload-btn">
+                                <i class="fas fa-camera"></i> Tirar foto
+                            </button>
+
+                            <div class="photo-preview" id="photo-preview"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Confirmar Cancelamento</button>
+                        <button type="button" class="btn btn-secondary" id="cancel-cancel-btn">Voltar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="camera-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Tirar foto da fachada</h3>
+                <button class="close-modal" id="close-camera-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="camera-wrap">
+                    <video id="camera-stream" autoplay playsinline></video>
+                </div>
+            </div>
+            <div class="modal-footer camera-actions">
+                <button type="button" class="btn btn-secondary" id="cancel-camera-btn">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="capture-photo-btn">
+                    <i class="fas fa-camera"></i> Capturar
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="js/app.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+
+</html>
